@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hotel Booking Predictor</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 300px;
+            margin: auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        input {
+            width: 90%;
+            padding: 8px;
+            margin: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>🏨 Hotel Cancellation Predictor</h2>
+
+    <input id="lead" type="number" placeholder="Lead Time"><br>
+    <input id="price" type="number" placeholder="Average Price"><br>
+    <input id="requests" type="number" placeholder="Special Requests"><br>
+    <input id="guests" type="number" placeholder="Total Guests"><br>
+    <input id="nights" type="number" placeholder="Total Nights"><br>
+    <input id="repeat" type="number" placeholder="Repeated Guest (0 or 1)"><br>
+
+    <button onclick="predict()">Predict</button>
+
+    <p id="result"></p>
+</div>
+
+<script>
+function predict() {
+    let data = [
+        Number(document.getElementById("lead").value),
+        Number(document.getElementById("price").value),
+        Number(document.getElementById("requests").value),
+        Number(document.getElementById("guests").value),
+        Number(document.getElementById("nights").value),
+        Number(document.getElementById("repeat").value)
+    ];
+
+    fetch("http://127.0.0.1:5000/predict", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ features: data })
+    })
+    .then(response => response.json())
+    .then(result => {
+        if(result.prediction == 1){
+            document.getElementById("result").innerText = "❌ Canceled";
+        } else {
+            document.getElementById("result").innerText = "✅ Confirmed";
+        }
+    })
+    .catch(error => {
+        console.error(error);
+        document.getElementById("result").innerText = "Error connecting to server!";
+    });
+}
+
+</script>
+
+</body>
+</html>
